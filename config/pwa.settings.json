@@ -1,0 +1,17 @@
+{
+    "_config_name": "pwa.settings",
+    "pwa_short_name": "dynamic value in file /pwa/pwa.module line 126",
+    "pwa_name": "dynamic value in file /pwa/pwa.module line 125",
+    "pwa_description": "",
+    "pwa_background_color": "dynamic value in file /pwa/pwa.module line 130",
+    "pwa_theme_color": "dynamic value in file /pwa/pwa.module line 291",
+    "pwa_start_url": "/",
+    "pwa_orientation": "portrait",
+    "pwa_display": "standalone",
+    "pwa_icons": "",
+    "pwa_sw_registration_event": "PWA_SW_REGISTRATION_EVENT_DEFAULT",
+    "pwa_sw_cache_exclude": "dynamic value in file /pwa/pwa.module line 219",
+    "pwa_sw_cache_urls": "",
+    "pwa_sw_cache_version": "1",
+    "pwa_filecache_manifest": ""
+}

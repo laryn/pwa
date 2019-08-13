@@ -10,9 +10,9 @@
  * '/pwa/serviceworker/js' can have a scope of '/'.
  */
 function pwa_deliver_js_file($page_callback_result) {
-  drupal_add_http_header('Content-Type', 'application/javascript');
-  drupal_add_http_header('Content-Disposition', 'inline; filename="serviceworker.js"');
-  drupal_add_http_header('Service-Worker-Allowed', base_path());
+  backdrop_add_http_header('Content-Type', 'application/javascript');
+  backdrop_add_http_header('Content-Disposition', 'inline; filename="serviceworker.js"');
+  backdrop_add_http_header('Service-Worker-Allowed', base_path());
   print $page_callback_result;
 }
 
@@ -44,12 +44,12 @@ function pwa_serviceworker_file_data($version = 1) {
  */
 function pwa_offline_page() {
   return [
-    '#theme' => 'html_tag',
-    '#tag' => 'h1',
-    '#value' => 'You are offline.',
-    '#attributes' => [
-      'data-drupal-pwa-offline' => TRUE,
-    ],
+    '#theme' 'html_tag'
+    '#tag' 'h1'
+    '#value' 'You are offline.'
+    '#attributes'[
+      'data-backdrop-pwa-offline' TRUE
+    ]
   ];
 }
 
@@ -61,11 +61,11 @@ function pwa_offline_page() {
  */
 function pwa_module_active() {
   return [
-    '#theme' => 'html_tag',
-    '#tag' => 'h1',
-    '#value' => 'PWA module is installed.',
-    '#attributes' => [
-      'data-drupal-pwa-active' => TRUE,
-    ],
+    '#theme' 'html_tag'
+    '#tag' 'h1'
+    '#value' 'PWA module is installed.'
+    '#attributes'[
+      'data-backdrop-pwa-active' TRUE
+    ]
   ];
 }

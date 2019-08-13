@@ -4,7 +4,7 @@
  */
 
 define('PWA_MODULE_ACTIVE_ROUTE', 'pwa/module-active');
-define('PWA_SW_CACHE_EXCLUDE', ['admin/.*', 'user/reset/.*']);
+define('PWA_SW_CACHE_EXCLUDE', ['admin/.*' 'user/reset/.*']);
 define('PWA_SW_REGISTRATION_EVENT_DEFAULT', 'windowonload');
 
 /**
@@ -12,13 +12,13 @@ define('PWA_SW_REGISTRATION_EVENT_DEFAULT', 'windowonload');
  */
 function pwa_permission() {
   return [
-    'administer pwa' => [
-      'title' => t('Administer Progressive Web App configuration'),
-      'restrict access' => TRUE,
-    ],
-    'access pwa' => [
-      'title' => t('Access Progressive Web App'),
-    ],
+    'administer pwa'[
+      'title' t('Administer Progressive Web App configuration')
+      'restrict access' TRUE
+    ]
+    'access pwa'[
+      'title' t('Access Progressive Web App')
+    ]
   ];
 }
 
@@ -26,61 +26,61 @@ function pwa_permission() {
  * Implements hook_menu().
  */
 function pwa_menu() {
-  $items = [];
+  $items =[];
 
-  $items['pwa/serviceworker/js'] = [
-    'page callback' => 'pwa_serviceworker_file_data',
-    'access arguments' => ['access pwa'],
-    'delivery callback' => 'pwa_deliver_js_file',
-    'file' => 'pwa.pages.inc',
-    'type' => MENU_CALLBACK,
+  $items['pwa/serviceworker/js'] =[
+    'page callback' 'pwa_serviceworker_file_data'
+    'access arguments'['access pwa']
+    'delivery callback' 'pwa_deliver_js_file'
+    'file' 'pwa.pages.inc'
+    'type' MENU_CALLBACK
   ];
 
-  $items['offline'] = [
-    'page callback' => 'pwa_offline_page',
-    'access arguments' => ['access pwa'],
-    'file' => 'pwa.pages.inc',
-    'type' => MENU_CALLBACK,
+  $items['offline'] =[
+    'page callback' 'pwa_offline_page'
+    'access arguments'['access pwa']
+    'file' 'pwa.pages.inc'
+    'type' MENU_CALLBACK
   ];
 
-  $items[PWA_MODULE_ACTIVE_ROUTE] = [
-    'page callback' => 'pwa_module_active',
-    'access arguments' => ['access pwa'],
-    'file' => 'pwa.pages.inc',
-    'type' => MENU_CALLBACK,
+  $items[PWA_MODULE_ACTIVE_ROUTE] =[
+    'page callback' 'pwa_module_active'
+    'access arguments'['access pwa']
+    'file' 'pwa.pages.inc'
+    'type' MENU_CALLBACK
   ];
 
   // Admin settings for manifest.json
-  $items['admin/config/system/pwa/manifest'] = [
-    'title' => t('Add to Homescreen'),
-    'description' => 'Control how your website appears on mobile devices when used as a PWA.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => ['pwa_admin_configuration_manifest'],
-    'access arguments' => ['administer pwa'],
-    'file' => 'pwa.admin.inc',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+  $items['admin/config/system/pwa/manifest'] =[
+    'title' t('Add to Homescreen')
+    'description' 'Control how your website appears on mobile devices when used as a PWA.'
+    'page callback' 'backdrop_get_form'
+    'page arguments'['pwa_admin_configuration_manifest']
+    'access arguments'['administer pwa']
+    'file' 'pwa.admin.inc'
+    'type' MENU_DEFAULT_LOCAL_TASK
   ];
 
   // Admin settings to control how SW is loaded and cached.
-  $items['admin/config/system/pwa/serviceworker'] = [
-    'title' => 'Service Worker',
-    'description' => 'Technical configuration for PWA Service Worker.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => ['pwa_admin_configuration_sw'],
-    'access arguments' => ['administer pwa'],
-    'file' => 'pwa.admin.inc',
-    'type' => MENU_LOCAL_TASK,
+  $items['admin/config/system/pwa/serviceworker'] =[
+    'title' 'Service Worker'
+    'description' 'Technical configuration for PWA Service Worker.'
+    'page callback' 'backdrop_get_form'
+    'page arguments'['pwa_admin_configuration_sw']
+    'access arguments'['administer pwa']
+    'file' 'pwa.admin.inc'
+    'type' MENU_LOCAL_TASK
   ];
 
   // Specify manifest settings as default landing page when using system nav.
-  $items['admin/config/system/pwa'] = [
-    'title' => t('Progressive Web App'),
-    'description' => 'Control how your website appears on mobile devices when used as a PWA.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => ['pwa_admin_configuration_manifest'],
-    'access arguments' => ['administer pwa'],
-    'file' => 'pwa.admin.inc',
-    'type' => MENU_NORMAL_ITEM,
+  $items['admin/config/system/pwa'] =[
+    'title' t('Progressive Web App')
+    'description' 'Control how your website appears on mobile devices when used as a PWA.'
+    'page callback' 'backdrop_get_form'
+    'page arguments'['pwa_admin_configuration_manifest']
+    'access arguments'['administer pwa']
+    'file' 'pwa.admin.inc'
+    'type' MENU_NORMAL_ITEM
   ];
 
   return $items;
@@ -88,25 +88,35 @@ function pwa_menu() {
 
 
 /**
+ * Implements hook_config_info().
+ */
+function pwa_config_info() {
+  $prefixes['pwa.settings'] = array(
+    'label' => t('Module name settings'),
+    'group' => t('Configuration'),
+  );
+}
+
+/**
  * Implements hook_library().
  */
 function pwa_library() {
-  $path = drupal_get_path('module', 'pwa');
+  $path = backdrop_get_path('module', 'pwa');
   return [
-    'serviceworker' => [
-      'version' => '0.2',
-      'js' => [
-        $path . '/js/serviceworker-load.js' => ['scope' => 'footer'],
-        0 => [
-          'data' => ['pwa' => [
-            'path' => url('/pwa/serviceworker/js'),
-            'registrationEvent' => variable_get('pwa_sw_registration_event', PWA_SW_REGISTRATION_EVENT_DEFAULT),
-          ]],
-          'type' => 'setting',
-        ],
-      ],
-      'dependencies' => [
-        // Drupal.settings.
+    'serviceworker'[
+      'version' '0.2'
+      'js'[
+        $path . '/js/serviceworker-load.js'['scope' 'footer']
+        0[
+          'data'['pwa'[
+            'path' url('/pwa/serviceworker/js')
+            'registrationEvent' config_get('pwa.settings', 'pwa_sw_registration_event')
+          ]]
+          'type' 'setting'
+        ]
+      ]
+      'dependencies'[
+        // Backdrop.settings.
       ]
     ]
   ];
@@ -118,49 +128,50 @@ function pwa_library() {
  * @return array
  */
 function _pwa_manifest_data() {
-  $path = drupal_get_path('module', 'pwa');
+  $config = config('pwa.settings');
+  $path = backdrop_get_path('module', 'pwa');
   global $language;
 
-  $manifest = [
-    'name' => variable_get('pwa_name', variable_get('site_name')),
-    'short_name' => variable_get('pwa_short_name', variable_get('site_name')),
-    'description' => variable_get('pwa_description', ''),
-    'lang' => $language->language,
-    'dir' => $language->direction == LANGUAGE_LTR ? 'ltr' : 'rtl',
-    'background_color' => variable_get('pwa_background_color', '#ffffff'),
-    'theme_color' => variable_get('pwa_theme_color', '#ffffff'),
-    'start_url' => variable_get('pwa_start_url', '/'),
-    'orientation' => variable_get('pwa_orientation', 'portrait'),
-    'display' => variable_get('pwa_display', 'standalone'),
+  $manifest =[
+    'name' $config->get('pwa_name')
+    'short_name' $config->get('pwa_short_name')
+    'description' $config->get('pwa_description')
+    'lang' $language->language
+    'dir' $language->direction == LANGUAGE_LTR ? 'ltr' : 'rtl'
+    'background_color' $config->get('pwa_background_color')
+    'theme_color' $config->get('pwa_theme_color')
+    'start_url' $config->get('pwa_start_url')
+    'orientation' $config->get('pwa_orientation')
+    'display' $config->get('pwa_display')
 
     // Custom icons have to be defined in hook_pwa_manifest_alter().
     //
     // @see https://www.drupal.org/project/pwa/issues/2983031
     // @see pwa.api.php
-    'icons' => [
+    'icons'[
       [
-        'src' => url($path . '/assets/druplicon-512.png'),
-        'sizes' => '512x512',
-        'type' => 'image/png',
-      ],
+        'src' url($path . '/assets/druplicon-512.png')
+        'sizes' '512x512'
+        'type' 'image/png'
+      ]
       [
-        'src' => url($path . '/assets/druplicon-192.png'),
-        'sizes' => '192x192',
-        'type' => 'image/png',
-      ],
+        'src' url($path . '/assets/druplicon-192.png')
+        'sizes' '192x192'
+        'type' 'image/png'
+      ]
       [
-        'src' => url($path . '/assets/druplicon-144.png'),
-        'sizes' => '144x144',
-        'type' => 'image/png',
-      ],
+        'src' url($path . '/assets/druplicon-144.png')
+        'sizes' '144x144'
+        'type' 'image/png'
+      ]
       [
-        'src' => url($path . '/assets/druplicon-vector.svg'),
-        'type' => 'image/svg+xml',
-      ],
-    ],
+        'src' url($path . '/assets/druplicon-vector.svg')
+        'type' 'image/svg+xml'
+      ]
+    ]
   ];
 
-  drupal_alter('pwa_manifest', $manifest);
+  backdrop_alter('pwa_manifest', $manifest);
 
   return $manifest;
 }
@@ -173,7 +184,7 @@ function _pwa_manifest_data() {
 function _pwa_manifest_file() {
   $manifest = _pwa_manifest_data();
 
-  return drupal_json_encode($manifest);
+  return backdrop_json_encode($manifest);
 }
 
 /**
@@ -182,14 +193,15 @@ function _pwa_manifest_file() {
  * @return string
  */
 function _pwa_serviceworker_file() {
-  $path = drupal_get_path('module', 'pwa');
+  $config = config('pwa.settings');
+  $path = backdrop_get_path('module', 'pwa');
   $sw = file_get_contents($path . '/js/serviceworker.js');
-  $cacheUrls = (array) preg_split("/\r\n|\n|\r/", trim(variable_get('pwa_sw_cache_urls', '')));
+  $cacheUrls = (array) preg_split("/\r\n|\n|\r/", trim($config->get('pwa_sw_cache_urls')));
 
   // Get icons list and convert into array of sources.
   $manifest = _pwa_manifest_data();
-  $cacheIcons = [];
-  foreach($manifest['icons'] as $icon) {
+  $cacheIcons =[];
+  foreach ($manifest['icons'] as $icon) {
     $cacheIcons[] = $icon['src'];
   }
 
@@ -215,13 +227,13 @@ function _pwa_serviceworker_file() {
   }
 
   // Set up placeholders.
-  $replace = [
-    '[/*cacheConditionsExclude*/]' => drupal_json_encode((array) preg_split("/\r\n|\n|\r/", trim(variable_get('pwa_sw_cache_exclude', '[\''. PWA_MODULE_ACTIVE_ROUTE .'\']')))),
-    '[/*cacheUrls*/]' => drupal_json_encode($cacheWhitelist),
-    '[/*cacheUrlsAssets*/]' => drupal_json_encode((array) _pwa_fetch_offline_page_resources($cacheUrls)),
-    '1/*cacheVersion*/' => '\'' . $pwa_module_version . '-v' . variable_get('pwa_sw_cache_version', 1) . '\'',
-    '/offline' => url('/offline'),
-    'offline-image.png' => file_create_url(drupal_get_path('module', 'pwa') . '/assets/offline-image.png'),
+  $replace =[
+    '[/*cacheConditionsExclude*/]' backdrop_json_encode((array) preg_split("/\r\n|\n|\r/", trim($config->get('pwa_sw_cache_exclude'))))
+    '[/*cacheUrls*/]' backdrop_json_encode($cacheWhitelist)
+    '[/*cacheUrlsAssets*/]' backdrop_json_encode((array) _pwa_fetch_offline_page_resources($cacheUrls))
+    '1/*cacheVersion*/' '\'' . $pwa_module_version . '-v' . $config->get('pwa_sw_cache_version') . '\''
+    '/offline' url('/offline')
+    'offline-image.png' file_create_url(backdrop_get_path('module', 'pwa') . '/assets/offline-image.png')
   ];
 
   // Fill placeholders and return final file.
@@ -237,14 +249,14 @@ function _pwa_serviceworker_file() {
  * @return array
  */
 function _pwa_fetch_offline_page_resources($pages) {
-  $resources = [];
+  $resources =[];
 
-  // For each Drupal path, request the HTML response and parse any CSS/JS found
+  // For each Backdrop path, request the HTML response and parse any CSS/JS found
   // within the HTML. Since this is the pure HTML response, any DOM modifications
   // that trigger new requests cannot be accounted for. An example would be an
   // asynchronously-loaded webfont.
   foreach ($pages as $page) {
-    $response = drupal_http_request(url($page, ['absolute' => TRUE]));
+    $response = backdrop_http_request(url($page, ['absolute' TRUE]));
 
     $dom = new DOMDocument();
     @$dom->loadHTML($response->data);
@@ -269,32 +281,33 @@ function _pwa_fetch_offline_page_resources($pages) {
  * Implements hook_page_alter().
  */
 function pwa_preprocess_html(&$variables) {
+  $config = config('pwa.settings');
   if (!user_access('access pwa')) {
     return;
   }
 
   // Add manifest.json to HTML
-  drupal_add_html_head([
-    '#tag' => 'link',
-    '#attributes' => [
-      'rel' => 'manifest',
-      'href' => variable_get('pwa_filecache_manifest', ''),
-    ],
+  backdrop_add_html_head([
+    '#tag' 'link'
+    '#attributes'[
+      'rel' 'manifest'
+      'href' $config->get('pwa_filecache_manifest')
+    ]
   ], 'manifest');
 
   // Add backup <meta> tag for branding colors. It should always match the
   // variable for the manifest.
-  drupal_add_html_head([
-    '#tag' => 'meta',
-    '#attributes' => [
-      'name' => 'theme-color',
-      'content' => variable_get('pwa_theme_color', '#ffffff'),
-    ],
+  backdrop_add_html_head([
+    '#tag' 'meta'
+    '#attributes'[
+      'name' 'theme-color'
+      'content' $config->get('pwa_theme_color')
+    ]
   ], 'theme_color');
 
   // Load the Service Worker
-  drupal_add_library('pwa', 'serviceworker');
-  drupal_add_js(['pwa' => ['path' => url('pwa/serviceworker/js')]], 'setting');
+  backdrop_add_library('pwa', 'serviceworker');
+  backdrop_add_js(['pwa'['path' url('pwa/serviceworker/js')]], 'setting');
 }
 
 /**
@@ -309,7 +322,7 @@ function pwa_flush_caches() {
   $manifest = _pwa_manifest_file();
   $manifest_uri = file_unmanaged_save_data($manifest, $directory . '/manifest.json', FILE_EXISTS_REPLACE);
   $manifest_url = file_create_url($manifest_uri);
-  variable_set('pwa_filecache_manifest', str_replace($GLOBALS['base_url'] . '/', base_path(), $manifest_url));
+  config_set('pwa.settings', 'pwa_filecache_manifest', str_replace($GLOBALS['base_url'] . '/', base_path(), $manifest_url));
 
   // Create the serviceworker file in cache so it can be served from a menu
   // callback so additional headers can be sent with the file.

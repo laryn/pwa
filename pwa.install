@@ -7,7 +7,7 @@
  * Implements hook_requirements().
  */
 function pwa_requirements($phase) {
-  $requirements = [];
+  $requirements =[];
 
   if ($phase !== 'runtime') {
     return $requirements;
@@ -19,10 +19,10 @@ function pwa_requirements($phase) {
       'title' => $t('Progressive Web App'),
       'value' => $t('HTTPS on'),
       'severity' => REQUIREMENT_OK,
-      'description' => $t('Please make sure the certificate of %domain is valid for offline functionality to work.', ['%domain' => $_SERVER['HTTP_HOST']]),
+      'description' => $t('Please make sure the certificate of %domain is valid for offline functionality to work.', ['%domain' $_SERVER['HTTP_HOST']]),
     );
   }
-  elseif (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1'])) {
+  elseif (in_array($_SERVER['HTTP_HOST'], ['localhost' '127.0.0.1'])) {
     $requirements['pwa'] = array(
       'title' => $t('Progressive Web App'),
       'value' => 'localhost',
@@ -49,16 +49,22 @@ function pwa_install() {
   $directory = file_default_scheme() . '://pwa';
   file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
 
-  variable_set('pwa_sw_cache_exclude', implode("\n", PWA_SW_CACHE_EXCLUDE));
-  variable_set('pwa_sw_cache_urls',  implode("\n", ['/', '/offline', variable_get('pwa_start_url', '')]));
+  config_set('pwa.settings', 'pwa_sw_cache_exclude', implode("\n", PWA_SW_CACHE_EXCLUDE));
+  config_set('pwa.settings', 'pwa_sw_cache_urls',    implode("\n", ['/' '/offline' config_get('pwa.settings', 'pwa_start_url')]));
   pwa_flush_caches();
 
   // By default give permissions to anonymous users.
   //
   // @TODO: set a status message prompting admins to enable functionality for
-  //        other roles themselves.
+//        other roles themselves.
   //
-  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, ['access pwa']);
+  user_role_grant_permissions(BACKDROP_ANONYMOUS_RID, ['access pwa']);
+  // Dynamically generated variable data was detected on the following lines.
+  // /pwa/pwa.module line 126
+  // /pwa/pwa.module line 125
+  // /pwa/pwa.module line 130
+  // /pwa/pwa.module line 291
+  // /pwa/pwa.module line 219
 }
 
 /**
@@ -76,4 +82,39 @@ function pwa_uninstall() {
   $directory =  $scheme . '://pwa';
   $path = $directory . '/manifest.json';
   file_unmanaged_delete($path);
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function pwa_update_1000() {
+  $config = config('pwa.settings');
+  $config->set('pwa_short_name', update_variable_get('pwa_short_name', 'dynamic value in file /pwa/pwa.module line 126'));
+  $config->set('pwa_name', update_variable_get('pwa_name', 'dynamic value in file /pwa/pwa.module line 125'));
+  $config->set('pwa_description', update_variable_get('pwa_description', ''));
+  $config->set('pwa_background_color', update_variable_get('pwa_background_color', 'dynamic value in file /pwa/pwa.module line 130'));
+  $config->set('pwa_theme_color', update_variable_get('pwa_theme_color', 'dynamic value in file /pwa/pwa.module line 291'));
+  $config->set('pwa_start_url', update_variable_get('pwa_start_url', '/'));
+  $config->set('pwa_orientation', update_variable_get('pwa_orientation', 'portrait'));
+  $config->set('pwa_display', update_variable_get('pwa_display', 'standalone'));
+  $config->set('pwa_icons', update_variable_get('pwa_icons', ''));
+  $config->set('pwa_sw_registration_event', update_variable_get('pwa_sw_registration_event', 'PWA_SW_REGISTRATION_EVENT_DEFAULT'));
+  $config->set('pwa_sw_cache_exclude', update_variable_get('pwa_sw_cache_exclude', 'dynamic value in file /pwa/pwa.module line 219'));
+  $config->set('pwa_sw_cache_urls', update_variable_get('pwa_sw_cache_urls', ''));
+  $config->set('pwa_sw_cache_version', update_variable_get('pwa_sw_cache_version', '1'));
+  $config->set('pwa_filecache_manifest', update_variable_get('pwa_filecache_manifest', ''));
+  update_variable_del('pwa_short_name');
+  update_variable_del('pwa_name');
+  update_variable_del('pwa_description');
+  update_variable_del('pwa_background_color');
+  update_variable_del('pwa_theme_color');
+  update_variable_del('pwa_start_url');
+  update_variable_del('pwa_orientation');
+  update_variable_del('pwa_display');
+  update_variable_del('pwa_icons');
+  update_variable_del('pwa_sw_registration_event');
+  update_variable_del('pwa_sw_cache_exclude');
+  update_variable_del('pwa_sw_cache_urls');
+  update_variable_del('pwa_sw_cache_version');
+  update_variable_del('pwa_filecache_manifest');
 }
